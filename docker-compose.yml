@@ -1,0 +1,33 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    ports:
+      - "8001:8000" # Host:Container (access via http://127.0.0.1:8001)
+    environment:
+      DATABASE_NAME: "books_db"
+      DATABASE_USER: "books"
+      DATABASE_PASSWORD: "books"
+      DATABASE_HOST: "db"
+      DATABASE_PORT: "5432"
+      APP_PORT: "8000"
+      DEVELOPMENT_MODE: "false"
+    depends_on:
+      - db
+    volumes:
+      - .:/app  # Mount current directory for hot reload (optional for dev)
+
+  db:
+    image: postgres:17.5
+    environment:
+      POSTGRES_DB: "books_db"
+      POSTGRES_USER: "books"
+      POSTGRES_PASSWORD: "books"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    ports:
+      - "5433:5432" # Optional: Access Postgres locally via 5433
+
+volumes:
+  pg_data:
